@@ -203,3 +203,76 @@ void Image::bitBlt(Image& dest, int X, int Y, int width, int height, int destX, 
 		}
 	}
 }
+
+int Image::computeRegionCode(int x, int y, int xMin, int xMax, int yMin, int yMax)
+{
+	int code = INSIDE;
+
+  if (x < xMin) { code |= LEFT; }
+  else if (x > xMax) { code |= RIGHT; }
+
+  if (y < yMin) { code |= BOTTOM; }
+  else if (y > yMax) { code |= TOP; }
+
+  return code;
+}
+
+bool Image::clipLine(int& x1, int& y1, int& x2, int& y2)
+{
+	int xMin = 0;
+	int yMin = 0;
+	int xMax = m_width;
+  int yMax = m_height;
+
+  int code0 = computeRegionCode(x1, y1, xMin, xMax, yMin, yMax);
+  int code1 = computeRegionCode(x2, y2, xMin, xMax, yMin, yMax);
+
+	while (true)
+	{
+		if (!(code0 | code1))
+		{
+      return true;
+		}
+    else if (code0 & code1)
+    {
+      return false;
+    }
+		else
+		{
+      int codeOut = code0 ? code0 : code1;
+
+      if (codeOut & TOP)
+      {
+        x1 += (x2 - x1) * (yMax - y1) / (y2 - y1);
+        y1 = yMax;
+      }
+      else if (codeOut & BOTTOM)
+      {
+        x1 += (x2 - x1) * (yMin - y1) / (y2 - y1);
+        y1 = yMin;
+      }
+      else if (codeOut & RIGHT)
+      {
+        y1 += (y2 - y1) * (xMax - x1) / (x2 - x1);
+        x1 = xMax;
+      }
+      else if (codeOut & LEFT)
+      {
+        y1 += (y2 - y1) * (xMin - x1) / (x2 - x1);
+        x1 = xMin;
+      }
+
+      if (codeOut == code0)
+      {
+        code0 = computeRegionCode(x1, y1, xMin, xMax, yMin, yMax);
+      }
+      else
+      {
+        code1 = computeRegionCode(x1, y1, xMin, xMax, yMin, yMax);
+      }
+
+		}
+	}
+
+	return true;
+}

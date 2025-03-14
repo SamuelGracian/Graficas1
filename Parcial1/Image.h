@@ -8,6 +8,15 @@ struct Color
 	unsigned char a;
 };
 
+enum RegionCode
+{
+  INSIDE = 0,
+  LEFT	 = 1,
+  RIGHT  = 1 << 1,
+  BOTTOM = 1 << 2,
+  TOP		 = 1 << 3
+};
+
 class Image
 {
 public:
@@ -42,7 +51,11 @@ public:
 
 	void biBltV2(Image& src, int x = 0, int y = 0);
 
-	void bitBltAlpha(Image & src, int X = 0, int Y = 0, int srcIniX = 0, int srcIniY);
+	void bitBltAlpha(Image & src, int X = 0, int Y = 0, int srcIniX = 0, int srcIniY = 0);
+
+  int computeRegionCode(int x, int y, int xMin, int xMax, int yMin, int yMax);
+
+  bool clipLine(int& x1, int& y1, int& x2, int& y2);
 
 protected:
 	/*Image resolution*/

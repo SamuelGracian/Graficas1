@@ -15,8 +15,7 @@ using namespace std;
 int main()  
 {
 	Image img;
-	img.decode();
-
+	img.Create(1920, 1080, 32);
 
 	return 0;
 }
