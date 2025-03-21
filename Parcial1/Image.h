@@ -44,6 +44,8 @@ public:
 
 	void bitBltAlpha(Image & src, int X = 0, int Y = 0, int srcIniX = 0, int srcIniY);
 
+	void BresenhamLine(int x1, int y1, int x2, int y2, const Color& color);
+
 protected:
 	/*Image resolution*/
 	unsigned int m_width = 0; //width
@@ -51,5 +53,12 @@ protected:
 	unsigned int m_bpp = 0; //bits per pixel
 
 	unsigned char* m_pixels = nullptr;
+
+	//clipping de lienas
+	const int INSIDE = 0; // 0000
+	const int LEFT = 1;   // 0001
+	const int RIGHT = 2;  // 0010
+	const int BOTTOM = 4; // 0100
+	const int TOP = 8;    // 1000
 };
 

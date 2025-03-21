@@ -45,7 +45,7 @@ void Bersenhamtriangle(SDL_Renderer* renderer, int x1, int y1, int x2, int y2, i
 
 int main()
 {
-    if (SDL_Init(SDL_INIT_VIDEO) != 0)
+    if (!SDL_Init(SDL_INIT_VIDEO))
     {
         SDL_Log("Couldn't initialize SDL: %s", SDL_GetError());
         return 1;
@@ -55,7 +55,7 @@ int main()
     SDL_Renderer* renderer = NULL;
     bool Running = true;
 
-    if (SDL_CreateWindowAndRenderer("Example1", 640, 480, 0, &window, &renderer) != 0)
+    if (!SDL_CreateWindowAndRenderer("Example1", 640, 480, 0, &window, &renderer))
     {
         std::cerr << "Error at creating window and renderer: " << SDL_GetError() << std::endl;
         SDL_Quit();
