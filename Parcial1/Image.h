@@ -59,6 +59,8 @@ public:
 
 	void BresenhamLine(int x1, int y1, int x2, int y2, const Color& color);
 
+	void Drawtriangle(int x1, int y1, int x2, int y2, int x3, int y3, const Color& color);
+
 protected:
 	/*Image resolution*/
 	unsigned int m_width = 0; //width

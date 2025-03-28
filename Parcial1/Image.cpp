@@ -305,3 +305,72 @@ bool Image::clipLine(int& x1, int& y1, int& x2, int& y2)
 
 	return true;
 }
+
+
+    void Image::Drawtriangle(int x1, int y1, int x2, int y2, int x3, int y3, const Color& color)
+    {
+		// Create edges of the triangle
+        int x[3] = { x1, x2, x3 };
+        int y[3] = { y1, y2, y3 };
+
+		// Check if the vertices are aligned
+        int area = x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2);
+        if (area == 0)
+        {
+			// if the area is 0, the vertices are aligned
+            return;
+        }
+
+		// Set the triangle as top or bottom
+        bool TopTriangle = false;
+        bool BottomTriangle = false;
+
+		// Order the vertices by y
+        if (y1 < y2 && y1 < y3)
+        {
+			// y1 is the smallest
+            if (y2 < y3)
+            {
+                // y1 < y2 < y3
+                TopTriangle = true;
+            }
+            else
+            {
+                // y1 < y3 < y2
+                BottomTriangle = true;
+            }
+        }
+        else if (y2 < y1 && y2 < y3)
+        {
+			// y2 is the smallest
+            if (y1 < y3)
+            {
+                // y2 < y1 < y3
+                TopTriangle = true;
+            }
+            else
+            {
+                // y2 < y3 < y1
+                BottomTriangle = true;
+            }
+        }
+        else
+        {
+			// y3 is the smallest
+            if (y1 < y2)
+            {
+                // y3 < y1 < y2
+                TopTriangle = true;
+            }
+            else
+            {
+                // y3 < y2 < y1
+                BottomTriangle = true;
+            }
+        }
+
+		// draw the triangle using the Bresenham algorithm
+        BresenhamLine(x1, y1, x2, y2, color);
+        BresenhamLine(x2, y2, x3, y3, color);
+        BresenhamLine(x3, y3, x1, y1, color);
+    }
