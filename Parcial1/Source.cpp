@@ -12,10 +12,17 @@ using namespace std;
 /* POINTERS */
 
 /* MAIN */
-int main()  
+int main()
 {
-	Image img;
-	img.Create(1920, 1080, 32);
+	Color red = { 255, 0, 0, 255 };
 
-	return 0;
+    Image img;
+
+    img.Create(100, 100, 24);
+
+    img.Drawtriangle(10, 10, 50, 80, 90, 20, red);
+
+    img.encode("triangle.bmp");
+
+    return 0;
 }

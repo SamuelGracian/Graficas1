@@ -76,4 +76,3 @@ protected:
 	const int BOTTOM = 4; // 0100
 	const int TOP = 8;    // 1000
 };
-
