@@ -53,13 +53,37 @@ public:
 
 	void bitBltAlpha(Image & src, int X = 0, int Y = 0, int srcIniX = 0, int srcIniY = 0);
 
-  int computeRegionCode(int x, int y, int xMin, int xMax, int yMin, int yMax);
+	int computeRegionCode(int x, int y, int xMin, int xMax, int yMin, int yMax);
 
-  bool clipLine(int& x1, int& y1, int& x2, int& y2);
+	bool clipLine(int& x1, int& y1, int& x2, int& y2);
 
 	void BresenhamLine(int x1, int y1, int x2, int y2, const Color& color);
 
+	/// <summary>
+	/// Draws a triangle using the Bresenham algorithm
+	/// </summary>
+	/// <param name="x1"></param> corner 1 in X
+	/// <param name="y1"></param> corner 1 in Y
+	/// <param name="x2"></param> corner 2 in X
+	/// <param name="y2"></param> corner 2 in Y
+	/// <param name="x3"></param> corner 3 in X
+	/// <param name="y3"></param> corner 3 in Y
+	/// <param name="color"></param> color of the triangle
 	void Drawtriangle(int x1, int y1, int x2, int y2, int x3, int y3, const Color& color);
+	
+	/// <summary>
+	/// Draws a triangle filled with color using the Bresenham algorithm
+	/// </summary>
+	/// <param name="x1"></param>
+	/// <param name="y1"></param>
+	/// <param name="x2"></param>
+	/// <param name="y2"></param>
+	/// <param name="x3"></param>
+	/// <param name="y3"></param>
+	/// <param name="color"></param>
+	void DrawtriangleV2(int x1, int y1, int x2, int y2, int x3, int y3, const Color& color);
+
+	void fillTriangle(int x1, int y1, int x2, int y2, int x3, int y3, const Color& color);
 
 protected:
 	/*Image resolution*/

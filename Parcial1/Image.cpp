@@ -374,3 +374,127 @@ bool Image::clipLine(int& x1, int& y1, int& x2, int& y2)
         BresenhamLine(x2, y2, x3, y3, color);
         BresenhamLine(x3, y3, x1, y1, color);
     }
+
+void Image::DrawtriangleV2(int x1, int y1, int x2, int y2, int x3, int y3, const Color& color)
+{
+    // Create edges of the triangle
+    int x[3] = { x1, x2, x3 };
+    int y[3] = { y1, y2, y3 };
+
+    // Check if the vertices are aligned
+    int area = x1 * (y2 - y3) + x2 * (y3 - y1) + x3 * (y1 - y2);
+    if (area == 0)
+    {
+        // if the area is 0, the vertices are aligned
+        return;
+    }
+
+    // Set the triangle as top or bottom
+    bool TopTriangle = false;
+    bool BottomTriangle = false;
+
+    // Order the vertices by y
+    if (y1 < y2 && y1 < y3)
+    {
+        // y1 is the smallest
+        if (y2 < y3)
+        {
+            // y1 < y2 < y3
+            TopTriangle = true;
+        }
+        else
+        {
+            // y1 < y3 < y2
+            BottomTriangle = true;
+        }
+    }
+    else if (y2 < y1 && y2 < y3)
+    {
+        // y2 is the smallest
+        if (y1 < y3)
+        {
+            // y2 < y1 < y3
+            TopTriangle = true;
+        }
+        else
+        {
+            // y2 < y3 < y1
+            BottomTriangle = true;
+        }
+    }
+    else
+    {
+        // y3 is the smallest
+        if (y1 < y2)
+        {
+            // y3 < y1 < y2
+            TopTriangle = true;
+        }
+        else
+        {
+            // y3 < y2 < y1
+            BottomTriangle = true;
+        }
+    }
+
+    // Calculate the midpoint
+    int midX = (x1 + x2 + x3) / 3;
+    int midY = (y1 + y2 + y3) / 3;
+
+    // Clip the lines to divide the triangle
+    int x1_clipped = x1, y1_clipped = y1;
+    int x2_clipped = x2, y2_clipped = y2;
+    int x3_clipped = x3, y3_clipped = y3;
+
+    clipLine(x1_clipped, y1_clipped, midX, midY);
+    clipLine(x2_clipped, y2_clipped, midX, midY);
+    clipLine(x3_clipped, y3_clipped, midX, midY);
+
+    // Draw the clipped triangle using the Bresenham algorithm
+    BresenhamLine(x1_clipped, y1_clipped, x2_clipped, y2_clipped, color);
+    BresenhamLine(x2_clipped, y2_clipped, x3_clipped, y3_clipped, color);
+    BresenhamLine(x3_clipped, y3_clipped, x1_clipped, y1_clipped, color);
+
+    // Fill the two resulting triangles
+    fillTriangle(x1, y1, x2, y2, midX, midY, color);
+    fillTriangle(x2, y2, x3, y3, midX, midY, color);
+}
+
+void Image::fillTriangle(int x1, int y1, int x2, int y2, int x3, int y3, const Color& color)
+{
+    auto edgeFunction = [](int x0, int y0, int x1, int y1, int x2, int y2) {
+        return (x2 - x1) * (y0 - y1) - (y2 - y1) * (x0 - x1);
+    };
+
+    // Determine minX, minY, maxX, maxY manually
+    int minX = x1;
+    if (x2 < minX) minX = x2;
+    if (x3 < minX) minX = x3;
+
+    int minY = y1;
+    if (y2 < minY) minY = y2;
+    if (y3 < minY) minY = y3;
+
+    int maxX = x1;
+    if (x2 > maxX) maxX = x2;
+    if (x3 > maxX) maxX = x3;
+
+    int maxY = y1;
+    if (y2 > maxY) maxY = y2;
+    if (y3 > maxY) maxY = y3;
+
+    for (int y = minY; y <= maxY; ++y)
+    {
+        for (int x = minX; x <= maxX; ++x)
+        {
+            int w0 = edgeFunction(x, y, x2, y2, x3, y3);
+            int w1 = edgeFunction(x, y, x3, y3, x1, y1);
+            int w2 = edgeFunction(x, y, x1, y1, x2, y2);
+
+            if (w0 >= 0 && w1 >= 0 && w2 >= 0)
+            {
+                setPixel(x, y, color);
+            }
+        }
+    }
+}
