@@ -1,10 +1,11 @@
 #include "Image.h"
-
 #include <fstream>
 #include <Windows.h>
 
 using std::fstream;
 using std::ios;
+
+#pragma pack (push,2)
 
 struct _bitMapFileHeader
 {
@@ -14,6 +15,8 @@ struct _bitMapFileHeader
 	unsigned short bfReserved2;	//reserved
 	unsigned long bfOffBits; //offset to the bitmap data
 };
+
+#pragma pack (pop)
 
 struct _bitMapCoreHeader
 {
@@ -93,7 +96,7 @@ void Image::encode(const char* filename)
 	fileHeader.bfSize = headerSize + lineMemoryWidth * m_height;
 	fileHeader.bfOffBits = headerSize;
 
-	bmpInfo.CoreHeader.bcSize = sizeof(_bitMapCoreHeader);
+	bmpInfo.CoreHeader.bcSize = sizeof(_bitMapSaveHeader);
 	bmpInfo.CoreHeader.bcWidth = m_width;
 	bmpInfo.CoreHeader.bcHeight = m_height;
 	bmpInfo.CoreHeader.bcPlanes = 1;
@@ -460,41 +463,36 @@ void Image::DrawtriangleV2(int x1, int y1, int x2, int y2, int x3, int y3, const
     fillTriangle(x2, y2, x3, y3, midX, midY, color);
 }
 
+
 void Image::fillTriangle(int x1, int y1, int x2, int y2, int x3, int y3, const Color& color)
 {
-    auto edgeFunction = [](int x0, int y0, int x1, int y1, int x2, int y2) {
-        return (x2 - x1) * (y0 - y1) - (y2 - y1) * (x0 - x1);
-    };
 
-    // Determine minX, minY, maxX, maxY manually
-    int minX = x1;
-    if (x2 < minX) minX = x2;
-    if (x3 < minX) minX = x3;
+    if (y1 > y2) { std::swap(x1, x2); std::swap(y1, y2); }
+    if (y1 > y3) { std::swap(x1, x3); std::swap(y1, y3); }
+    if (y2 > y3) { std::swap(x2, x3); std::swap(y2, y3); }
 
-    int minY = y1;
-    if (y2 < minY) minY = y2;
-    if (y3 < minY) minY = y3;
+    auto drawHorizontalLine = [&](int xStart, int xEnd, int y) {
+        if (xStart > xEnd) std::swap(xStart, xEnd);
+        BresenhamLine(xStart, y, xEnd, y, color);
+        };
 
-    int maxX = x1;
-    if (x2 > maxX) maxX = x2;
-    if (x3 > maxX) maxX = x3;
+    auto interpolate = [](int x1, int y1, int x2, int y2, int y) {
+        if (y2 == y1) return x1;
+        return x1 + (x2 - x1) * (y - y1) / (y2 - y1);
+        };
 
-    int maxY = y1;
-    if (y2 > maxY) maxY = y2;
-    if (y3 > maxY) maxY = y3;
 
-    for (int y = minY; y <= maxY; ++y)
+    for (int y = y1; y <= y2; ++y)
     {
-        for (int x = minX; x <= maxX; ++x)
-        {
-            int w0 = edgeFunction(x, y, x2, y2, x3, y3);
-            int w1 = edgeFunction(x, y, x3, y3, x1, y1);
-            int w2 = edgeFunction(x, y, x1, y1, x2, y2);
+        int xStart = interpolate(x1, y1, x3, y3, y);
+        int xEnd = interpolate(x1, y1, x2, y2, y);
+        drawHorizontalLine(xStart, xEnd, y);
+    }
 
-            if (w0 >= 0 && w1 >= 0 && w2 >= 0)
-            {
-                setPixel(x, y, color);
-            }
-        }
+    for (int y = y2; y <= y3; ++y)
+    {
+        int xStart = interpolate(x1, y1, x3, y3, y);
+        int xEnd = interpolate(x2, y2, x3, y3, y);
+        drawHorizontalLine(xStart, xEnd, y);
     }
 }
