@@ -20,6 +20,8 @@ int main()
 
     img.Create(100, 100, 24);
 
+    img.encode("triangle2.bmp");
+
     img.Drawtriangle(10, 10, 50, 80, 90, 20, red);
 
 	img.DrawtriangleV2(10, 10, 50, 80, 90, 20, red);
