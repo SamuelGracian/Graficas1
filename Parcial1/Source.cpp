@@ -15,6 +15,7 @@ using namespace std;
 int main()
 {
 	Color red = { 255, 0, 0, 255 };
+    Color green = { 51,255,91,255 };
 
     Image img;
 
@@ -22,9 +23,11 @@ int main()
 
     //img.Drawtriangle(10, 10, 50, 80, 90, 20, red);
 
-	img.DrawtriangleV2(30, 30, 90, 80, 24, 7, red);
+	//img.DrawtriangleV3(23,40,65,12,32,14, red);
 
-    img.encode("triangle10.bmp");
+    img.DrawtriangleV3(25, 20, 12, 10, 32, 54, green);
+
+    img.encode("triangle14.bmp");
 
     return 0;
 }

@@ -72,7 +72,7 @@ public:
 	void Drawtriangle(int x1, int y1, int x2, int y2, int x3, int y3, const Color& color);
 	
 	/// <summary>
-	/// Draws a triangle filled with color using the Bresenham algorithm
+	/// Draws a triangle filled with color using the Bresenham algorithm, and colors it but leaves the edges uncolored
 	/// </summary>
 	/// <param name="x1"></param>
 	/// <param name="y1"></param>
@@ -83,7 +83,29 @@ public:
 	/// <param name="color"></param>
 	void DrawtriangleV2(int x1, int y1, int x2, int y2, int x3, int y3, const Color& color);
 
-	void fillTriangle(int x1, int y1, int x2, int y2, int x3, int y3, const Color& color);
+	/// <summary>
+	/// Draw a triangle filled with color using the Bresenham algorithm and colors it
+	/// </summary>
+	/// <param name="x1"></param>
+	/// <param name="y1"></param>
+	/// <param name="x2"></param>
+	/// <param name="y2"></param>
+	/// <param name="x3"></param>
+	/// <param name="y3"></param>
+	/// <param name="color"></param>
+	void DrawtriangleV3(int x1, int y1, int x2, int y2, int x3, int y3, const Color& color);
+
+	/// <summary>
+	/// By using the Bresenham algorithm, fills the triangle with the color
+	/// </summary>
+	/// <param name="x1"></param>
+	/// <param name="y1"></param>
+	/// <param name="x2"></param>
+	/// <param name="y2"></param>
+	/// <param name="x3"></param>
+	/// <param name="y3"></param>
+	/// <param name="color"></param>
+	void FillTriangle(int x1, int y1, int x2, int y2, int x3, int y3, const Color& color);
 
 protected:
 	/*Image resolution*/

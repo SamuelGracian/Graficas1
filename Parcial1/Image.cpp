@@ -459,12 +459,12 @@ void Image::DrawtriangleV2(int x1, int y1, int x2, int y2, int x3, int y3, const
     BresenhamLine(x3_clipped, y3_clipped, x1_clipped, y1_clipped, color);
 
     // Fill the two resulting triangles
-    fillTriangle(x1, y1, x2, y2, midX, midY, color);
-    fillTriangle(x2, y2, x3, y3, midX, midY, color);
+    FillTriangle(x1, y1, x2, y2, midX, midY, color);
+    FillTriangle(x2, y2, x3, y3, midX, midY, color);
 }
 
 
-void Image::fillTriangle(int x1, int y1, int x2, int y2, int x3, int y3, const Color& color)
+void Image::FillTriangle(int x1, int y1, int x2, int y2, int x3, int y3, const Color& color)
 {
 
     if (y1 > y2) { std::swap(x1, x2); std::swap(y1, y2); }
@@ -476,23 +476,50 @@ void Image::fillTriangle(int x1, int y1, int x2, int y2, int x3, int y3, const C
         BresenhamLine(xStart, y, xEnd, y, color);
         };
 
+
     auto interpolate = [](int x1, int y1, int x2, int y2, int y) {
         if (y2 == y1) return x1;
         return x1 + (x2 - x1) * (y - y1) / (y2 - y1);
         };
 
 
-    for (int y = y1; y <= y2; ++y)
-    {
-        int xStart = interpolate(x1, y1, x3, y3, y);
-        int xEnd = interpolate(x1, y1, x2, y2, y);
-        drawHorizontalLine(xStart, xEnd, y);
+    if (y2 > y1) {
+        for (int y = y1; y < y2; ++y) 
+        {
+            int xStart = interpolate(x1, y1, x3, y3, y);
+            int xEnd = interpolate(x1, y1, x2, y2, y);
+            drawHorizontalLine(xStart, xEnd, y);
+        }
     }
 
-    for (int y = y2; y <= y3; ++y)
-    {
-        int xStart = interpolate(x1, y1, x3, y3, y);
-        int xEnd = interpolate(x2, y2, x3, y3, y);
-        drawHorizontalLine(xStart, xEnd, y);
+
+    if (y3 > y2) {
+        for (int y = y2; y <= y3; ++y)
+        {
+            int xStart = interpolate(x1, y1, x3, y3, y);
+            int xEnd = interpolate(x2, y2, x3, y3, y);
+            drawHorizontalLine(xStart, xEnd, y);
+        }
     }
+}
+
+void Image::DrawtriangleV3(int x1, int y1, int x2, int y2, int x3, int y3, const Color& color)
+{
+
+    if (y1 > y2) { std::swap(x1, x2); std::swap(y1, y2); }
+    if (y1 > y3) { std::swap(x1, x3); std::swap(y1, y3); }
+    if (y2 > y3) { std::swap(x2, x3); std::swap(y2, y3); }
+
+
+    int x4 = x1 + (x3 - x1) * (y2 - y1) / (y3 - y1);
+    int y4 = y2;
+
+
+    BresenhamLine(x1, y1, x2, y2, color);
+    BresenhamLine(x2, y2, x3, y3, color);
+    BresenhamLine(x3, y3, x1, y1, color);
+
+
+    FillTriangle(x1, y1, x2, y2, x4, y4, color); 
+    FillTriangle(x2, y2, x3, y3, x4, y4, color); 
 }
